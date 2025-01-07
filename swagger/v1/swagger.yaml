@@ -1,0 +1,227 @@
+openapi: 3.0.3
+info:
+  title: Transportation Management API Documentation
+  version: v1
+paths:
+
+  /api/v1/drivers:
+    post:
+      summary: Create Driver
+      description: Creates a new driver and returns a JWT token.
+      tags:
+        - Drivers
+      requestBody:
+        description: Driver creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                driver:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: newman@gmail.com
+                    password:
+                      type: string
+                      example: password123
+      responses:
+        '201':
+          description: Driver created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                      example: Email can't be blank
+
+
+
+  /api/v1/drivers/login:
+    post:
+      summary: Driver Login
+      description: Logs in a driver and retrieves a JWT token for authentication.
+      tags:
+        - Drivers
+      requestBody:
+        description: Driver login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: driver@example.com
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid credentials
+
+  /api/v1/trucks:
+    get:
+      summary: Get All Trucks
+      description: Retrieves a list of all available trucks.
+      tags:
+        - Trucks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    registration_number:
+                      type: string
+                      example: ABC-123
+                    model:
+                      type: string
+                      example: Volvo FH16
+                    capacity:
+                      type: string
+                      example: 20 tons
+                    status:
+                      type: string
+                      example: available
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No trucks found
+
+  /api/v1/trucks/assign:
+    post:
+      summary: Assign Truck to Driver
+      description: Assigns a truck to a driver.
+      tags:
+        - Trucks
+      requestBody:
+        description: Truck and Driver assignment details
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                truck_id:
+                  type: integer
+                  example: 1
+                driver_id:
+                  type: integer
+                  example: 2
+      responses:
+        '200':
+          description: Truck assigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Truck successfully assigned to driver
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Truck or driver not found
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/trucks/assigned:
+    get:
+      summary: Get Assigned Trucks
+      description: Retrieves a list of all trucks assigned to drivers.
+      tags:
+        - Trucks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    truck_id:
+                      type: integer
+                      example: 1
+                    driver_id:
+                      type: integer
+                      example: 2
+                    driver_name:
+                      type: string
+                      example: John Doe
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No assigned trucks found
