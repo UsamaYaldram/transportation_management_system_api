@@ -7,12 +7,9 @@ class DriversController < ApplicationController
   def create
     driver = Driver.new(driver_params)
     if driver.save
-      render json: {
-        meta: { token: JwtService.encode(driver_id: driver.id) },
-        data: DriverSerializer.new(driver).serializable_hash[:data] # Remove the extra wrapping
-      }, status: :created
+      render json: success_response(driver), status: :created
     else
-      render json: format_errors(driver.errors), status: :unprocessable_entity
+      render json: format_errors(driver.errors.full_messages), status: :unprocessable_entity
     end
   end
 
@@ -20,10 +17,7 @@ class DriversController < ApplicationController
   def login
     driver = Driver.find_by(email: params[:email])
     if driver&.authenticate(params[:password])
-      render json: { 
-        meta: { token: JwtService.encode(driver_id: driver.id) },
-        data: DriverSerializer.new(driver).serializable_hash
-      }
+      render json: success_response(driver)
     else
       render json: format_errors(['Invalid email or password']), status: :unauthorized
     end
@@ -36,6 +30,13 @@ class DriversController < ApplicationController
   end
 
   def format_errors(errors)
-    { errors: errors.map { |error| { detail: error } } }
+    { errors: Array(errors).map { |error| { detail: error } } }
+  end
+
+  def success_response(driver)
+    {
+      meta: { token: JwtService.encode(driver_id: driver.id) },
+      data: DriverSerializer.new(driver).serializable_hash[:data]
+    }
   end
 end
