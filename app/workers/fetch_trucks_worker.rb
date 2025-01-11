@@ -2,22 +2,48 @@
 
 class FetchTrucksWorker
   include Sidekiq::Worker
+  include HTTParty
+
+  sidekiq_options retry: 3, queue: "default"
+
+  BASE_URL = Rails.application.credentials.dig(:api, :trucks, :base_url)
+  API_KEY = Rails.application.credentials.dig(:api, :trucks, :api_key)
 
   def perform
-    api_key = 'illa-trucks-2023'
     page = 1
 
     loop do
-      response = RestClient.get(
-        "https://api-task-bfrm.onrender.com/api/v1/trucks",
-        headers: { API_KEY: api_key, params: { page: page } }
+      response = self.class.get(
+        BASE_URL,
+        headers: { "API_KEY" => API_KEY },
+        query: { page: page }
       )
-      data = JSON.parse(response.body)
-      data['trucks'].each do |truck|
-        Truck.find_or_create_by(name: truck['name'], truck_type: truck['truck_type'])
+
+      if response.success?
+        trucks = response.parsed_response
+        trucks.each do |truck|
+          Truck.find_or_create_by(
+            id: truck["id"]
+          ) do |t|
+            t.name = truck["name"]
+            t.truck_type = truck["truck_type"]
+            t.created_at = truck["created_at"]
+            t.updated_at = truck["updated_at"]
+          end
+        end
+
+        # Logging the progress
+        puts "Page #{page} processed successfully."
+
+        # Check if we've reached the last page
+        total_pages = response.headers["total-pages"].to_i
+        break if page >= total_pages
+
+        # Move to the next page
+        page += 1
+      else
+        raise "Failed to fetch trucks on page #{page}: #{response.code} - #{response.message}"
       end
-      break if page >= response.headers['total-pages'].to_i
-      page += 1
     end
   end
 end
