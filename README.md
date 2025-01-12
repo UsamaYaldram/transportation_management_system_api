@@ -28,8 +28,8 @@ Make sure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone git@github.com:UsamaYaldram/transportation_management_system_api.git
+   cd transportation_management_system_api
    ```
 
 2. Install dependencies:
