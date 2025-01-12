@@ -35,8 +35,7 @@ class DriversController < ApplicationController
 
   def success_response(driver)
     {
-      meta: { token: JwtService.encode(driver_id: driver.id) },
-      data: DriverSerializer.new(driver).serializable_hash[:data]
+      meta: { token: JwtService.encode(driver_id: driver.id) }
     }
   end
 end
