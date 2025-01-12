@@ -1,35 +1,35 @@
 # Transportation Management API
 
-This project is a Ruby on Rails-based API for managing a transportation system. It provides endpoints for managing drivers, trucks, and their assignments, and supports authentication using JSON Web Tokens (JWT). Additionally, it offers Swagger API documentation and background job processing with Sidekiq.
+Transportation Management API is a Rails application that provides endpoints to manage drivers and trucks in a transportation system. It includes features such as driver creation, login, assigning trucks to drivers, and retrieving assigned trucks.
 
----
+## Table of Contents
 
-## Features
-- Driver creation and authentication with JWT.
-- Truck management (list, assign to drivers).
-- View assigned trucks and their details (including assignment dates).
-- API documentation via Swagger.
-- Background job processing with Sidekiq.
-- Secure and structured API responses using JSON:API serialization.
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
 
----
+## Getting Started
+
+Follow these instructions to get a copy of the project up and running on your local machine.
 
 ## Prerequisites
-Make sure you have the following installed:
+
 - Ruby 3.1.4
-- Rails 7.1.5
+- Rails 7.1.5.1
 - PostgreSQL
 - Redis
-- Bundler
 
----
-
-## Setup
+## Installation
 
 1. Clone the repository:
    ```bash
    git clone git@github.com:UsamaYaldram/transportation_management_system_api.git
-   cd transportation_management_system_api
+   cd transportation-management-api
    ```
 
 2. Install dependencies:
@@ -39,117 +39,65 @@ Make sure you have the following installed:
 
 3. Set up the database:
    ```bash
-   rails db:create db:migrate db:seed
+   rails db:create db:migrate
    ```
 
-4. Configure credentials:
-   Add your environment variables (e.g., BASE_URL, API_KEY) using Rails credentials.
+4. Configure credentials for JWT and other secrets:
    ```bash
-   EDITOR="code --wait" bin/rails credentials:edit
+   rails credentials:edit
    ```
 
-5. Start the Rails server:
+5. Start the server:
    ```bash
    rails server
    ```
 
-6. Start Sidekiq:
-   ```bash
-   bundle exec sidekiq
-   ```
+## Usage
 
----
+- To start Sidekiq for background jobs:
+  ```bash
+  bundle exec sidekiq
+  ```
 
-## API Endpoints
+- To schedule cron jobs using Whenever:
+  ```bash
+  whenever --update-crontab
+  ```
 
-### Drivers
-1. **Create Driver**
-   - Endpoint: `POST /drivers`
-   - Request Body:
-     ```json
-     {
-       "driver": {
-         "email": "driver@example.com",
-         "password": "password123"
-       }
-     }
-     ```
-   - Response: JWT token.
+## API Documentation
 
-2. **Driver Login**
-   - Endpoint: `POST /drivers/login`
-   - Request Body:
-     ```json
-     {
-       "email": "driver@example.com",
-       "password": "password123"
-     }
-     ```
-   - Response: JWT token.
-
-### Trucks
-1. **Get All Trucks**
-   - Endpoint: `GET /trucks`
-   - Response: List of trucks.
-
-2. **Assign Truck to Driver**
-   - Endpoint: `POST /trucks/assign`
-   - Query Parameters:
-     - `truck_id` (integer): ID of the truck.
-     - `driver_id` (integer): ID of the driver.
-   - Response: Assignment success message.
-
-3. **Get Assigned Trucks**
-   - Endpoint: `GET /trucks/assigned`
-   - Response: List of assigned trucks with assignment dates.
-
----
+Detailed API documentation is available at:
+```
+/api-docs/index.html
+```
+Access this URL in your browser after starting the Rails server.
 
 ## Testing
-Run tests using RSpec:
+
+Run the test suite using RSpec:
 ```bash
 bundle exec rspec
 ```
 
----
-
 ## Gems Used
+
 - **Rails**: Web application framework.
 - **PostgreSQL**: Database.
-- **Redis**: Background job storage.
-- **Sidekiq**: Background job processing.
-- **JWT**: Authentication.
-- **JSONAPI::Serializer**: API response serialization.
-- **Rswag**: API documentation (Swagger).
-- **HTTParty**: HTTP requests.
+- **Sidekiq**: Background job processor.
+- **Redis**: In-memory data structure store for Sidekiq.
+- **JWT**: JSON Web Token for authentication.
+- **Rswag**: Swagger documentation.
+- **Jsonapi-serializer**: JSON:API serialization.
+- **Httparty**: HTTP request handling.
 - **Whenever**: Cron job scheduling.
-- **Faker**: Test data generation.
+- **RSpec**: Testing framework.
+- **FactoryBot**: Test data setup.
+- **Faker**: Fake data generator.
 
----
+## Contributing
 
-## Development Tools
-- **Byebug**: Debugging.
-- **RSpec-Rails**: Testing framework.
-- **FactoryBot-Rails**: Fixtures replacement.
-- **Error Highlight**: Enhanced error visibility.
-
----
-
-## Deployment
-1. Ensure the database is migrated:
-   ```bash
-   rails db:migrate
-   ```
-2. Precompile assets:
-   ```bash
-   rails assets:precompile
-   ```
-3. Start the server in production:
-   ```bash
-   RAILS_ENV=production rails server
-   ```
-
----
+Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## License
+
 This project is licensed under the MIT License.
